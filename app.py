@@ -8,8 +8,10 @@ DEBUG = config('DEBUG', False, cast=bool)
 app = Flask(__name__)
 
 
-@app.route('/postreceive', methods=['POST'])
+@app.route('/postreceive', methods=['POST', 'GET'])
 def postreceive():
+    if request.method == 'GET':
+        return "Yeah, it works but use POST\n"
     print("FORM:")
     print(dict(request.form))
     print("BODY:")
