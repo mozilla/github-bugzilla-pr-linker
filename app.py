@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from decouple import config
 from flask import Flask, request
 
@@ -12,13 +14,12 @@ app = Flask(__name__)
 def postreceive():
     if request.method == 'GET':
         return "Yeah, it works but use POST\n"
-    print("FORM:")
-    print(dict(request.form))
-    print("BODY:")
-    try:
-        print(request.get_json())
-    except AttributeError:
-        print('*no body*')
+    pprint(dict(request.form))
+    # print("BODY:")
+    # try:
+    #     print(request.get_json())
+    # except AttributeError:
+    #     print('*no body*')
     return "OK"
 
 
