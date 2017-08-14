@@ -30,6 +30,9 @@ def postreceive():
 
     # Need do a SHA check on the payload
     header_signature = request.headers.get('X-Hub-Signature')
+    print("ALL HEADERS")
+    print(list(request.headers.keys()))
+    print('header_signature:', repr(header_signature))
     if header_signature is None:
         abort(403)
 
