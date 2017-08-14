@@ -30,9 +30,6 @@ def postreceive():
 
     # Need do a SHA check on the payload
     header_signature = request.headers.get('X-Hub-Signature')
-    print("ALL HEADERS")
-    print(list(request.headers.keys()))
-    print('header_signature:', repr(header_signature))
     if header_signature is None:
         abort(403)
 
@@ -43,6 +40,9 @@ def postreceive():
     print('request.data:')
     print(type(request.data))
     print(repr(request.data))
+    print('request.body:')
+    print(type(request.body))
+    print(repr(request.body))
 
     # HMAC requires the key to be bytes, but data is string
     mac = hmac.new(
