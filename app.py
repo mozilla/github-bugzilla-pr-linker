@@ -4,9 +4,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def homepage():
-    return "See README"
-
-
+    return "See README\n"
 
 
 if __name__ == '__main__':
