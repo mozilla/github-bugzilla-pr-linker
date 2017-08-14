@@ -38,11 +38,11 @@ def postreceive():
         abort(501)
 
     print('request.data:')
-    print(type(request.data))
-    print(repr(request.data))
-    print('request.body:')
-    print(type(request.body))
-    print(repr(request.body))
+    print(type(request.get_data()))
+    print(repr(request.get_data()))
+    # print('request.body:')
+    # print(type(request.body))
+    # print(repr(request.body))
 
     # HMAC requires the key to be bytes, but data is string
     mac = hmac.new(
