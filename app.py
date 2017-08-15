@@ -123,9 +123,10 @@ def postreceive():
 
     posted = json.loads(request.form['payload'])
     # posted=payload
-    # from pprint import pprint
+    from pprint import pprint
     logger.info(type(posted))
     logger.info(str(posted)[:1000])
+    pprint(posted)
 
     if not posted.get('pull_request'):
         logger.warning(
@@ -133,20 +134,22 @@ def postreceive():
         )
         abort(400, 'Not a pull request')
 
-    if posted.get('action') != 'opened':  # only created PRs
+    pull_request = posted['pull_request']
+
+    if pull_request.get('action') != 'opened':  # only created PRs
         logger.warning("Action was NOT 'opened'. It was {!r}".format(
-            posted.get('action')
+            pull_request.get('action')
         ))
         return 'OK'
 
-    if not find_bug_id(posted.get('title')):
+    if not pull_request.get('title') or not find_bug_id(pull_request['title']):
         logger.info('No bug ID found in title {!r}'.format(
-            posted.get('title')
+            pull_request.get('title')
         ))
         return 'No bug ID found in the title'
 
-    url = posted['_links']['html']['href']
-    bug_id = find_bug_id(posted['title'])
+    url = pull_request['_links']['html']['href']
+    bug_id = find_bug_id(pull_request['title'])
     # can we find the bug at all?!
     bug_comments = find_bug_comments(bug_id)
     if bug_comments is None:
