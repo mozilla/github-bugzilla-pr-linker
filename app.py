@@ -120,9 +120,10 @@ def postreceive():
         logger.warning('HMAC signature did not match')
         abort(403)
 
-    posted = request.form
+    posted = request.form['payload']
     # posted=payload
     # from pprint import pprint
+    logger.info(type(posted))
     logger.info(str(posted)[:1000])
 
     if not posted.get('pull_request'):
