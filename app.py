@@ -173,7 +173,7 @@ def postreceive():
     response = requests.post(attachment_url, json={
         'ids': [bug_id],
         'summary': summary,
-        'data': base64.b64encode(summary.encode('utf-8')),
+        'data': base64.b64encode(summary.encode('utf-8')).decode('utf-8'),
         'content_type': 'text/plain',
         'comment': 'Optional comment',
     }, headers={
