@@ -154,7 +154,7 @@ def postreceive():
         logger.warning(
             'Not a pull_request {!r}'.format(posted.get('pull_request'))
         )
-        abort(400, 'Not a pull request')
+        abort(400)
 
     if posted.get('action') != 'opened':  # only created PRs
         logger.warning("Action was NOT 'opened'. It was {!r}".format(
@@ -188,7 +188,7 @@ def postreceive():
     for i, comment in enumerate(bug_comments):
         if url in comment['text']:
             # exit early!
-            return f'GitHub PR URL already in comment {i+1}'
+            pass#return f'GitHub PR URL already in comment {i+1}'
 
     # let's go ahead and post the comment!
     attachment_url = f'{BUGZILLA_BASE_URL}/rest/bug/{bug_id}/attachment'
@@ -198,20 +198,21 @@ def postreceive():
     session = requests_retry_session()
     diff_data = _get_diff_data(session, pull_request['diff_url']) or ''
 
-    print("DIFF DATA")
-    print(repr(diff_data[:1000]))
+    comment = pull_request.get('description', '*no pull request description*')
 
     response = requests.post(attachment_url, json={
         'ids': [bug_id],
         'summary': summary,
         'data': base64.b64encode(diff_data.encode('utf-8')).decode('utf-8'),
         'file_name': f'file_{pull_request_id}.txt',
-        'content_type': 'text/x-github-pull-request',
-        'comment': 'Optional comment',
+        # 'content_type': 'text/x-github-pull-request',
+        # 'content_type': 'text/plain',
+        'comment': comment,
+        'is_patch': 'true',
     }, headers={
         'X-BUGZILLA-API-KEY': BUGZILLA_API_KEY,
     })
-    print((response.status_code, response.content))
+    print((response.status_code, response.content[:1000]))
     if response.status_code == 401:
         logger.error(
             'Unauthorized attempt to post attachment (%r)',
