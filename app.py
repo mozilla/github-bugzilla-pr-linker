@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 import sys
@@ -168,16 +169,22 @@ def postreceive():
 
     # let's go ahead and post the comment!
     attachment_url = f'{BUGZILLA_BASE_URL}/rest/bug/{bug_id}/attachment'
+    summary = f'Link to GitHub pull-request: {url}'
     response = requests.post(attachment_url, json={
         'ids': [bug_id],
-        'summary': f'Link to GitHub pull-request: {url}',
+        'summary': summary,
+        'data': base64.b64encode(summary.encode('utf-8')),
         'content_type': 'text/plain',
         'comment': 'Optional comment',
     }, headers={
         'X-BUGZILLA-API-KEY': BUGZILLA_API_KEY,
     })
-
     print((response.status_code, response.content))
+    if response.status_code == 401:
+        logger.error(
+            'Unauthorized attempt to post attachment (%r)',
+            response.content
+        )
 
     return "OK", 201
 
