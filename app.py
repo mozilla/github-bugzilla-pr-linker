@@ -1,5 +1,6 @@
 import re
 import hmac
+import ipaddress
 from pprint import pprint
 
 import requests
@@ -10,6 +11,16 @@ from flask import Flask, request, abort
 DEBUG = config('DEBUG', False, cast=bool)
 GITHUB_WEBHOOK_SECRET = config('GITHUB_WEBHOOK_SECRET', 'secret')
 BUGZILLA_BASE_URL = config('BUGZILLA_BASE_URL', 'https://bugzilla.mozilla.org')
+# To generate one, go to https://bugzilla.mozilla.org/userprefs.cgi?tab=apikey
+# For production grade you probably want this to be tied to a more "formal"
+# user. Aka. some bot account.
+# XXX perhaps we can use this:
+# https://mana.mozilla.org/wiki/display/WebDev/Bugzilla+Github+Bug+Closer+Account
+BUGZILLA_API_KEY = config('BUGZILLA_API_KEY')
+
+# Optional
+GHE_ADDRESS = config('GHE_ADDRESS', None)
+
 
 app = Flask(__name__)
 
@@ -22,6 +33,33 @@ class ConfigurationError(ValueError):
 def postreceive():
     if request.method == 'GET':
         return "Yeah, it works but use POST\n"
+
+    # Store the IP address of the requester
+    print('request.remote_addr', repr(request.remote_addr))
+    request_ip = ipaddress.ip_address(request.remote_addr)
+
+    # If GHE_ADDRESS is specified, use it as the hook_blocks.
+    if GHE_ADDRESS:
+        hook_blocks = [GHE_ADDRESS]
+    # Otherwise get the hook address blocks from the API.
+    else:
+        # XXX cache this
+        hook_blocks = requests.get(
+            'https://api.github.com/meta'
+        ).json()['hooks']
+
+    # Check if the POST request is from github.com or GHE
+    print('hook_blocks', hook_blocks)
+    print('request_ip', repr(request_ip))
+    for block in hook_blocks:
+        if ipaddress.ip_address(request_ip) in ipaddress.ip_network(block):
+            break  # the remote_addr is within the network range of github.
+    else:
+        if request_ip != '127.0.0.1':
+            abort(403)
+
+    if request.headers.get('X-GitHub-Event') == 'ping':
+        return {'msg': 'Hi!'}
 
     if GITHUB_WEBHOOK_SECRET == 'secret' and not DEBUG:
         raise ConfigurationError(
@@ -37,9 +75,9 @@ def postreceive():
     if sha_name != 'sha1':
         abort(501)
 
-    print('request.data:')
-    print(type(request.get_data()))
-    print(repr(request.get_data()))
+    # print('request.data:')
+    # print(type(request.get_data()))
+    # print(repr(request.get_data()))
     # print('request.body:')
     # print(type(request.body))
     # print(repr(request.body))
@@ -51,37 +89,51 @@ def postreceive():
         digestmod='sha1'
     )
 
-    print("MAC", repr(mac.hexdigest()), 'SIGNATURE', repr(signature))
+    # print("MAC", repr(mac.hexdigest()), 'SIGNATURE', repr(signature))
     if mac.hexdigest() != signature:
         abort(403)
 
     posted = request.form
-    pprint(dict(posted))
+    # pprint(dict(posted))
 
-    if (
-        posted.get('pull_request') and  # sanity check the payload
-        posted.get('action') == 'opened' and  # only *created* PRs
-        posted.get('state') == 'open' and  # not sure this is needed
-        find_bug_id(posted.get('title'))  # only bother if it can be found
-    ):
-        url = posted['_links']['html']['href']
-        bug_id = find_bug_id(posted['title'])
-        # can we find the bug at all?!
-        bug_comments = find_bug_comments(bug_id)
-        if bug_comments is None:
-            # Oh no! Bug can't be found
-            abort(400, f'Bug {bug_id!r} can not be found')
+    if not posted.get('pull_request'):
+        abort(400, 'Not a pull request')
 
-        print("BUG_COMMENTS")
-        print(repr(bug_comments))
+    if posted.get('action') != 'opened':  # only created PRs
+        return 'OK'
 
-        # loop over the current comments to see if there's already on
-        for comment in bug_comments:
-            print("COMMENT:")
-            pprint(comment)
-            print('\n')
+    if not find_bug_id(posted.get('title')):
+        return 'No bug ID found in the title'
 
-    return "OK"
+    url = posted['_links']['html']['href']
+    bug_id = find_bug_id(posted['title'])
+    # can we find the bug at all?!
+    bug_comments = find_bug_comments(bug_id)
+    if bug_comments is None:
+        # Oh no! Bug can't be found
+        abort(400, f'Bug {bug_id!r} can not be found')
+
+    print("BUG_COMMENTS")
+    print(repr(bug_comments))
+
+    # loop over the current comments to see if there's already on
+    for i, comment in enumerate(bug_comments):
+        if url in comment['text']:
+            # exit early!
+            return f'GitHub PR URL already in comment {i+1}'
+
+    # let's go ahead and post the comment!
+    attachment_url = f'{BUGZILLA_BASE_URL}/rest/bug/{bug_id}/attachment'
+    response = requests.post(attachment_url, json={
+        'ids': [bug_id],
+        'summary': f'Link to GitHub pull-request: {url}',
+        'content_type': 'text/plain',
+        'comment': 'Optional comment',
+    })
+
+    print(response)
+
+    return "OK", 201
 
 
 def find_bug_comments(id):
@@ -89,10 +141,10 @@ def find_bug_comments(id):
     # XXX should this use secure credentials??
     # bug_url = f'{BASE_URL}/rest/bug/{bug_id}/comment'
     # XXX Idea; it could
-    bug_url = f'{BUGZILLA_BASE_URL}/rest/bug/{id}'
+    bug_url = f'{BUGZILLA_BASE_URL}/rest/bug/{id}/comment'
     response = requests.get(bug_url)
     if response.status_code == 200:
-        return response.json()
+        return response.json()['bugs'][id]['comments']
 
 
 def find_bug_id(text):
