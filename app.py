@@ -188,8 +188,10 @@ def postreceive():
 
     # loop over the current comments to see if there's already on
     for i, comment in enumerate(bug_comments):
-        print('COMMENT')
-        print(comment)
+        # print('COMMENT')
+        # print(comment)
+        if comment.get('is_obsolete'):
+            continue
         if url in comment['text']:
             # exit early!
             logger.info(f'Pull request URL already in comment {i+1}')
@@ -223,10 +225,17 @@ def postreceive():
             response.content
         )
         abort(500)
-    print(response.status_code)
-    print(response.json())
 
-    return "OK", 201
+    if response.status_code == 201:
+        attachment_id = list(response.json()['attachments'].keys())[0]
+        logger.info(f'Successfully posted attachment {attachment_id}')
+        return "OK", 201
+    else:
+        logger.error('Unable to create attachment. {} ({!r})'.format(
+            response.status_code,
+            response.content
+        ))
+        return "OK"
 
 
 def _get_diff_data(session, url):
