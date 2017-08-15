@@ -31,34 +31,33 @@ class ConfigurationError(ValueError):
 
 @app.route('/postreceive', methods=['POST', 'GET'])
 def postreceive():
-    print('In /postreceive', request.method)
     if request.method == 'GET':
         return "Yeah, it works but use POST\n"
 
-    # Store the IP address of the requester
-    print('request.remote_addr', repr(request.remote_addr))
-    request_ip = ipaddress.ip_address(request.remote_addr)
-
-    # If GHE_ADDRESS is specified, use it as the hook_blocks.
-    if GHE_ADDRESS:
-        hook_blocks = [GHE_ADDRESS]
-    # Otherwise get the hook address blocks from the API.
-    else:
-        # XXX cache this
-        hook_blocks = requests.get(
-            'https://api.github.com/meta'
-        ).json()['hooks']
-
-    # Check if the POST request is from github.com or GHE
-    print('hook_blocks', hook_blocks)
-    print('request_ip', repr(request_ip))
-    for block in hook_blocks:
-        if ipaddress.ip_address(request_ip) in ipaddress.ip_network(block):
-            break  # the remote_addr is within the network range of github.
-    else:
-        if request_ip != '127.0.0.1':
-            print('request_ip != 127.0.0.1')
-            abort(403)
+    # # Store the IP address of the requester
+    # print('request.remote_addr', repr(request.remote_addr))
+    # request_ip = ipaddress.ip_address(request.remote_addr)
+    #
+    # # If GHE_ADDRESS is specified, use it as the hook_blocks.
+    # if GHE_ADDRESS:
+    #     hook_blocks = [GHE_ADDRESS]
+    # # Otherwise get the hook address blocks from the API.
+    # else:
+    #     # XXX cache this
+    #     hook_blocks = requests.get(
+    #         'https://api.github.com/meta'
+    #     ).json()['hooks']
+    #
+    # # Check if the POST request is from github.com or GHE
+    # print('hook_blocks', hook_blocks)
+    # print('request_ip', repr(request_ip))
+    # for block in hook_blocks:
+    #     if ipaddress.ip_address(request_ip) in ipaddress.ip_network(block):
+    #         break  # the remote_addr is within the network range of github.
+    # else:
+    #     if request_ip != '127.0.0.1':
+    #         print('request_ip != 127.0.0.1')
+    #         abort(403)
 
     if request.headers.get('X-GitHub-Event') == 'ping':
         return {'msg': 'Hi!'}
