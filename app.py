@@ -144,14 +144,13 @@ def postreceive():
     summary = f'Link to GitHub pull-request: {url}'
     pull_request_id = pull_request['id']
 
-    diff_data = _get_diff_data(session, pull_request['diff_url']) or ''
-
+    # diff_data = _get_diff_data(session, pull_request['diff_url']) or ''
     comment = pull_request.get('description', '')
 
     response = requests.post(attachment_url, json={
         'ids': [bug_id],
         'summary': summary,
-        'data': base64.b64encode(diff_data.encode('utf-8')).decode('utf-8'),
+        'data': base64.b64encode(url.encode('utf-8')).decode('utf-8'),
         'file_name': f'file_{pull_request_id}.txt',
         'content_type': 'text/x-github-pull-request',
         # 'content_type': 'text/plain',
