@@ -86,6 +86,8 @@ def postreceive():
     # print(repr(request.body))
 
     # HMAC requires the key to be bytes, but data is string
+    print('request.data', len(request.data))
+    print('request.get_data()', len(request.get_data()))
     mac = hmac.new(
         GITHUB_WEBHOOK_SECRET.encode('utf-8'),
         msg=request.data,
