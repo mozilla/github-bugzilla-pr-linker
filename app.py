@@ -78,12 +78,12 @@ def postreceive():
         print(f'Sha name {sha_name!r}')
         abort(501)
 
-    # print('request.data:')
-    # print(type(request.get_data()))
-    # print(repr(request.get_data()))
-    # print('request.body:')
-    # print(type(request.body))
-    # print(repr(request.body))
+    print('request.data:')
+    print(type(request.get_data()))
+    print(repr(request.get_data()))
+    print('request.body:')
+    print(type(request.body))
+    print(repr(request.body))
 
     # HMAC requires the key to be bytes, but data is string
     print('request.data', len(request.data))
