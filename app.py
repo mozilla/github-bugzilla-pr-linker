@@ -70,10 +70,12 @@ def postreceive():
     # Need do a SHA check on the payload
     header_signature = request.headers.get('X-Hub-Signature')
     if header_signature is None:
+        print('No header_signature!')
         abort(403)
 
     sha_name, signature = header_signature.split('=')
     if sha_name != 'sha1':
+        print(f'Sha name {sha_name!r}')
         abort(501)
 
     # print('request.data:')
@@ -92,6 +94,7 @@ def postreceive():
 
     # print("MAC", repr(mac.hexdigest()), 'SIGNATURE', repr(signature))
     if mac.hexdigest() != signature:
+        print("SIgnature didn't match")
         abort(403)
 
     posted = request.form
