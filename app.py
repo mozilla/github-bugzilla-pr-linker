@@ -56,6 +56,7 @@ def postreceive():
             break  # the remote_addr is within the network range of github.
     else:
         if request_ip != '127.0.0.1':
+            print('request_ip != 127.0.0.1')
             abort(403)
 
     if request.headers.get('X-GitHub-Event') == 'ping':
