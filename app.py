@@ -31,6 +31,7 @@ class ConfigurationError(ValueError):
 
 @app.route('/postreceive', methods=['POST', 'GET'])
 def postreceive():
+    print('In /postreceive', request.method)
     if request.method == 'GET':
         return "Yeah, it works but use POST\n"
 
