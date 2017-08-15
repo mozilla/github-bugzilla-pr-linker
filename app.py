@@ -9,6 +9,8 @@ import logging
 # from pprint import pprint
 
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from decouple import config
 from flask import Flask, request, abort
 
@@ -33,6 +35,27 @@ if 'DYNO' in os.environ:
     app.logger.setLevel(
         logging.DEBUG if DEBUG else logging.INFO
     )
+
+
+def requests_retry_session(
+    retries=3,
+    backoff_factor=0.3,
+    status_forcelist=(502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
+
 
 
 class ConfigurationError(ValueError):
@@ -170,11 +193,20 @@ def postreceive():
     # let's go ahead and post the comment!
     attachment_url = f'{BUGZILLA_BASE_URL}/rest/bug/{bug_id}/attachment'
     summary = f'Link to GitHub pull-request: {url}'
+    pull_request_id = pull_request['id']
+
+    session = requests_retry_session()
+    diff_data = _get_diff_data(session, pull_request['diff_url']) or ''
+
+    print("DIFF DATA")
+    print(repr(diff_data[:1000]))
+
     response = requests.post(attachment_url, json={
         'ids': [bug_id],
         'summary': summary,
-        'data': base64.b64encode(summary.encode('utf-8')).decode('utf-8'),
-        'content_type': 'text/plain',
+        'data': base64.b64encode(diff_data.encode('utf-8')).decode('utf-8'),
+        'file_name': f'file_{pull_request_id}.txt',
+        'content_type': 'text/x-github-pull-request',
         'comment': 'Optional comment',
     }, headers={
         'X-BUGZILLA-API-KEY': BUGZILLA_API_KEY,
@@ -187,6 +219,12 @@ def postreceive():
         )
 
     return "OK", 201
+
+
+def _get_diff_data(session, url):
+    response = session.get(url)
+    if response.status_code == 200:
+        return response.text
 
 
 def find_bug_comments(id):
