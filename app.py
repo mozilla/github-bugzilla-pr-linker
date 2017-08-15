@@ -1,7 +1,10 @@
+import os
+import sys
 import re
 import hmac
-import ipaddress
-from pprint import pprint
+import logging
+# import ipaddress
+# from pprint import pprint
 
 import requests
 from decouple import config
@@ -23,6 +26,9 @@ GHE_ADDRESS = config('GHE_ADDRESS', None)
 
 
 app = Flask(__name__)
+if 'DYNO' in os.environ:
+    app.logger.addHandler(logging.StreamHandler(sys.stdout))
+    app.logger.setLevel(logging.INFO)
 
 
 class ConfigurationError(ValueError):
@@ -33,6 +39,11 @@ class ConfigurationError(ValueError):
 def postreceive():
     if request.method == 'GET':
         return "Yeah, it works but use POST\n"
+
+    app.logger.debug('APP DEBUG')
+    app.logger.info('APP INFO')
+    app.logger.warning('APP WARNING')
+    app.logger.error('APP ERROR')
 
     # # Store the IP address of the requester
     # print('request.remote_addr', repr(request.remote_addr))
@@ -105,6 +116,7 @@ def postreceive():
     # pprint(dict(posted))
 
     if not posted.get('pull_request'):
+        print('Not a payload!', repr(posted.get('pull_request')))
         abort(400, 'Not a pull request')
 
     if posted.get('action') != 'opened':  # only created PRs
@@ -119,6 +131,7 @@ def postreceive():
     bug_comments = find_bug_comments(bug_id)
     if bug_comments is None:
         # Oh no! Bug can't be found
+        print('bug_comments is none!!')
         abort(400, f'Bug {bug_id!r} can not be found')
 
     print("BUG_COMMENTS")
@@ -151,6 +164,7 @@ def find_bug_comments(id):
     # XXX Idea; it could
     bug_url = f'{BUGZILLA_BASE_URL}/rest/bug/{id}/comment'
     response = requests.get(bug_url)
+    print('bug_url', bug_url, response.status_code)
     if response.status_code == 200:
         return response.json()['bugs'][id]['comments']
 
