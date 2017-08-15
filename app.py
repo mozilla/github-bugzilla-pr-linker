@@ -115,18 +115,16 @@ def postreceive():
         digestmod='sha1'
     )
 
-    # print("MAC", repr(mac.hexdigest()), 'SIGNATURE', repr(signature))
     if mac.hexdigest() != signature:
-        # print("SIgnature didn't match")
         logger.warning('HMAC signature did not match')
         abort(403)
 
     posted = json.loads(request.form['payload'])
     # posted=payload
-    from pprint import pprint
-    logger.info(type(posted))
-    logger.info(str(posted)[:1000])
-    pprint(posted)
+    # from pprint import pprint
+    # logger.info(type(posted))
+    # logger.info(str(posted)[:1000])
+    # pprint(posted)
 
     if not posted.get('pull_request'):
         logger.warning(
@@ -150,15 +148,17 @@ def postreceive():
 
     url = pull_request['_links']['html']['href']
     bug_id = find_bug_id(pull_request['title'])
-    # can we find the bug at all?!
+    # Can we find the bug at all?!
     bug_comments = find_bug_comments(bug_id)
+    # Note, if the bug doesn't have any comments 'bug_comments' will
+    # be an empty list, not None.
     if bug_comments is None:
         # Oh no! Bug can't be found
-        print('bug_comments is none!!')
-        abort(400, f'Bug {bug_id!r} can not be found')
+        logger.warning(f'Bug {bug_id!r} can not be found')
+        abort(400)
 
-    print("BUG_COMMENTS")
-    print(repr(bug_comments))
+    # print("BUG_COMMENTS")
+    # print(repr(bug_comments))
 
     # loop over the current comments to see if there's already on
     for i, comment in enumerate(bug_comments):
@@ -173,9 +173,11 @@ def postreceive():
         'summary': f'Link to GitHub pull-request: {url}',
         'content_type': 'text/plain',
         'comment': 'Optional comment',
+    }, headers={
+        'X-BUGZILLA-API-KEY': BUGZILLA_API_KEY,
     })
 
-    print(response)
+    print((response.status_code, response.content))
 
     return "OK", 201
 
