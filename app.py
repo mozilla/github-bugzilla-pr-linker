@@ -170,10 +170,12 @@ def postreceive():
         ))
         return 'No bug ID found in the title'
 
+    session = requests_retry_session()
+
     url = pull_request['_links']['html']['href']
     bug_id = find_bug_id(pull_request['title'])
     # Can we find the bug at all?!
-    bug_comments = find_bug_comments(bug_id)
+    bug_comments = find_bug_comments(session, bug_id)
     # Note, if the bug doesn't have any comments 'bug_comments' will
     # be an empty list, not None.
     if bug_comments is None:
@@ -186,16 +188,18 @@ def postreceive():
 
     # loop over the current comments to see if there's already on
     for i, comment in enumerate(bug_comments):
+        print('COMMENT')
+        print(comment)
         if url in comment['text']:
             # exit early!
-            pass#return f'GitHub PR URL already in comment {i+1}'
+            logger.info(f'Pull request URL already in comment {i+1}')
+            pass#return
 
     # let's go ahead and post the comment!
     attachment_url = f'{BUGZILLA_BASE_URL}/rest/bug/{bug_id}/attachment'
     summary = f'Link to GitHub pull-request: {url}'
     pull_request_id = pull_request['id']
 
-    session = requests_retry_session()
     diff_data = _get_diff_data(session, pull_request['diff_url']) or ''
 
     comment = pull_request.get('description', '*no pull request description*')
@@ -212,12 +216,15 @@ def postreceive():
     }, headers={
         'X-BUGZILLA-API-KEY': BUGZILLA_API_KEY,
     })
-    print((response.status_code, response.content[:1000]))
+    # print((response.status_code, response.content[:1000]))
     if response.status_code == 401:
         logger.error(
             'Unauthorized attempt to post attachment (%r)',
             response.content
         )
+        abort(500)
+    print(response.status_code)
+    print(response.json())
 
     return "OK", 201
 
@@ -228,13 +235,13 @@ def _get_diff_data(session, url):
         return response.text
 
 
-def find_bug_comments(id):
+def find_bug_comments(session, id):
     """Return true if the bug can be found"""
     # XXX should this use secure credentials??
     # bug_url = f'{BASE_URL}/rest/bug/{bug_id}/comment'
     # XXX Idea; it could
     bug_url = f'{BUGZILLA_BASE_URL}/rest/bug/{id}/comment'
-    response = requests.get(bug_url)
+    response = session.get(bug_url)
     print('bug_url', bug_url, response.status_code)
     if response.status_code == 200:
         return response.json()['bugs'][id]['comments']
