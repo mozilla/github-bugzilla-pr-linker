@@ -156,7 +156,7 @@ def postreceive():
         'content_type': 'text/x-github-pull-request',
         # 'content_type': 'text/plain',
         'comment': comment,
-        'is_patch': 'true',
+        # 'is_patch': 'true',
     }, headers={
         'X-BUGZILLA-API-KEY': BUGZILLA_API_KEY,
     })
@@ -170,14 +170,16 @@ def postreceive():
 
     if response.status_code == 201:
         attachment_id = list(response.json()['attachments'].keys())[0]
-        logger.info(f'Successfully posted attachment {attachment_id}')
-        return "OK", 201
+        msg = f'Successfully posted attachment {attachment_id}'
+        logger.info(msg)
+        return msg, 201
     else:
-        logger.error('Unable to create attachment. {} ({!r})'.format(
+        msg = 'Unable to create attachment. {} ({!r})'.format(
             response.status_code,
             response.content
-        ))
-        return "OK"
+        )
+        logger.error(msg)
+        return msg
 
 
 def _get_diff_data(session, url):
