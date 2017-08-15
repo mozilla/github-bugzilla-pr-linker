@@ -28,7 +28,9 @@ GHE_ADDRESS = config('GHE_ADDRESS', None)
 app = Flask(__name__)
 if 'DYNO' in os.environ:
     app.logger.addHandler(logging.StreamHandler(sys.stdout))
-    app.logger.setLevel(logging.INFO)
+    app.logger.setLevel(
+        logging.DEBUG if DEBUG else logging.INFO
+    )
 
 
 class ConfigurationError(ValueError):
@@ -37,13 +39,15 @@ class ConfigurationError(ValueError):
 
 @app.route('/postreceive', methods=['POST', 'GET'])
 def postreceive():
+    logger = app.logger
+
     if request.method == 'GET':
         return "Yeah, it works but use POST\n"
 
-    app.logger.debug('APP DEBUG')
-    app.logger.info('APP INFO')
-    app.logger.warning('APP WARNING')
-    app.logger.error('APP ERROR')
+    # app.logger.debug('APP DEBUG')
+    # app.logger.info('APP INFO')
+    # app.logger.warning('APP WARNING')
+    # app.logger.error('APP ERROR')
 
     # # Store the IP address of the requester
     # print('request.remote_addr', repr(request.remote_addr))
@@ -81,16 +85,19 @@ def postreceive():
     # Need do a SHA check on the payload
     header_signature = request.headers.get('X-Hub-Signature')
     if header_signature is None:
-        print('No header_signature!')
+        logger.warning(
+            'No X-Hub-Signature header in request'
+        )
         abort(403)
 
     sha_name, signature = header_signature.split('=')
     if sha_name != 'sha1':
-        print(f'Sha name {sha_name!r}')
-        abort(501)
+        logger.warning(f'Algo used expected to be sha1, not {sha_name!r}')
+        abort(400)
 
     raw_payload = request.get_data()
-    print('raw_payload', len(raw_payload), repr(raw_payload[:50]))
+    logger.debug(f'raw_payload is {len(raw_payload)}bytes')
+    # print('raw_payload', len(raw_payload), repr(raw_payload[:50]))
     # print('request.data:')
     # print(type(request.get_data()))
     # print(repr(request.get_data()))
@@ -109,20 +116,30 @@ def postreceive():
 
     # print("MAC", repr(mac.hexdigest()), 'SIGNATURE', repr(signature))
     if mac.hexdigest() != signature:
-        print("SIgnature didn't match")
+        # print("SIgnature didn't match")
+        logger.warning('HMAC signature did not match')
         abort(403)
 
     posted = request.form
-    # pprint(dict(posted))
+    from pprint import pprint
+    pprint(dict(posted))
 
     if not posted.get('pull_request'):
-        print('Not a payload!', repr(posted.get('pull_request')))
+        logger.warning(
+            'Not a pull_request {!r}'.format(posted.get('pull_request'))
+        )
         abort(400, 'Not a pull request')
 
     if posted.get('action') != 'opened':  # only created PRs
+        logger.warning("Action was NOT 'opened'. It was {!r}".format(
+            posted.get('action')
+        ))
         return 'OK'
 
     if not find_bug_id(posted.get('title')):
+        logger.info('No bug ID found in title {!r}'.format(
+            posted.get('title')
+        ))
         return 'No bug ID found in the title'
 
     url = posted['_links']['html']['href']
