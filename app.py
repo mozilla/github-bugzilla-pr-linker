@@ -134,13 +134,13 @@ def postreceive():
         )
         abort(400, 'Not a pull request')
 
-    pull_request = posted['pull_request']
-
-    if pull_request.get('action') != 'opened':  # only created PRs
+    if posted.get('action') != 'opened':  # only created PRs
         logger.warning("Action was NOT 'opened'. It was {!r}".format(
-            pull_request.get('action')
+            posted.get('action')
         ))
         return 'OK'
+
+    pull_request = posted['pull_request']
 
     if not pull_request.get('title') or not find_bug_id(pull_request['title']):
         logger.info('No bug ID found in title {!r}'.format(
