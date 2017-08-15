@@ -121,7 +121,7 @@ def postreceive():
         logger.warning('HMAC signature did not match')
         abort(403)
 
-    logger.info('Raw Payload', raw_payload.decode('utf-8')[:1000])
+    logger.info('Raw Payload {!r}'.format(raw_payload.decode('utf-8')[:1000]))
     payload = json.loads(raw_payload.decode('utf-8'))
     # posted = request.form
     posted=payload
