@@ -1,4 +1,3 @@
-import json
 import os
 import sys
 import re
@@ -121,12 +120,10 @@ def postreceive():
         logger.warning('HMAC signature did not match')
         abort(403)
 
-    logger.info('Raw Payload {!r}'.format(raw_payload.decode('utf-8')[:1000]))
-    payload = json.loads(raw_payload.decode('utf-8'))
-    # posted = request.form
-    posted=payload
-    from pprint import pprint
-    pprint(payload)
+    posted = request.form
+    # posted=payload
+    # from pprint import pprint
+    logger.info(str(posted)[:1000])
 
     if not posted.get('pull_request'):
         logger.warning(
