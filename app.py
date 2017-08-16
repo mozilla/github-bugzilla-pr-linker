@@ -10,7 +10,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from decouple import config
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 
 
 DEBUG = config('DEBUG', False, cast=bool)
@@ -64,7 +64,7 @@ def postreceive():
         return "Yeah, it works but use POST\n"
 
     if request.headers.get('X-GitHub-Event') == 'ping':
-        return {'msg': 'Hi!'}
+        return jsonify(msg='Hi!')
 
     if GITHUB_WEBHOOK_SECRET == 'secret' and not DEBUG:
         raise ConfigurationError(

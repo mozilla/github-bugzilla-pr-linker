@@ -32,3 +32,11 @@ License
 =======
 
 [MPL2](http://www.mozilla.org/MPL/2.0/)
+
+
+Heroku
+======
+
+At the moment this Flask app is deployed on Heroku, using the
+Mozilla corporate account, under the name
+[github-bugzilla-pr-linker](https://dashboard.heroku.com/apps/github-bugzilla-pr-linker).
