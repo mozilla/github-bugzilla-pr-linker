@@ -1,7 +1,13 @@
-A work in progress.
+What this is
+============
 
-The goal is a bot that can automatically create Bugzilla attachments
+A webhook that can automatically create Bugzilla attachments
 when new GitHub Pull Requests are created.
+
+It does this but looking at the first line of the commit message and
+looks for a Bugzilla bug ID. Then if that bug can be found (and doesn't
+already have a link) it creates an attachment which is a link that redirects
+to the Pull Request on GitHub.
 
 How to use
 ==========
@@ -20,3 +26,9 @@ There, type in the the following:
   checkbox and uncheck all others.
 
 ![Screenshot](screenshot-github-webhook.png)
+
+
+License
+=======
+
+[MPL2](http://www.mozilla.org/MPL/2.0/)

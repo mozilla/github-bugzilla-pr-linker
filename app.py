@@ -137,7 +137,7 @@ def postreceive():
         if url in comment['text']:
             # exit early!
             logger.info(f'Pull request URL already in comment {i+1}')
-            pass#return
+            return
 
     # let's go ahead and post the comment!
     attachment_url = f'{BUGZILLA_BASE_URL}/rest/bug/{bug_id}/attachment'
@@ -180,7 +180,6 @@ def postreceive():
 
 def find_bug_comments(session, id):
     """Return true if the bug can be found"""
-    # XXX should this use secure credentials??
     bug_url = f'{BUGZILLA_BASE_URL}/rest/bug/{id}/comment'
     response = session.get(bug_url)
     print('bug_url', bug_url, response.status_code)
@@ -201,7 +200,7 @@ def find_bug_id(text):
 
 @app.route('/')
 def homepage():
-    return "See README\n"
+    return "See README on https://github.com/mozilla/github-bugzilla-pr-linker"
 
 
 if __name__ == '__main__':
