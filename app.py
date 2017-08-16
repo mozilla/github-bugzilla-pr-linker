@@ -144,7 +144,6 @@ def postreceive():
     summary = f'Link to GitHub pull-request: {url}'
     pull_request_id = pull_request['id']
 
-    # diff_data = _get_diff_data(session, pull_request['diff_url']) or ''
     comment = pull_request.get('description', '')
 
     response = requests.post(attachment_url, json={
@@ -153,9 +152,7 @@ def postreceive():
         'data': base64.b64encode(url.encode('utf-8')).decode('utf-8'),
         'file_name': f'file_{pull_request_id}.txt',
         'content_type': 'text/x-github-pull-request',
-        # 'content_type': 'text/plain',
         'comment': comment,
-        # 'is_patch': 'true',
     }, headers={
         'X-BUGZILLA-API-KEY': BUGZILLA_API_KEY,
     })
@@ -179,12 +176,6 @@ def postreceive():
         )
         logger.error(msg)
         return msg
-
-
-def _get_diff_data(session, url):
-    response = session.get(url)
-    if response.status_code == 200:
-        return response.text
 
 
 def find_bug_comments(session, id):
