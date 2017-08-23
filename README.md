@@ -4,8 +4,8 @@ What this is
 A webhook that can automatically create Bugzilla attachments
 when new GitHub Pull Requests are created.
 
-It does this but looking at the first line of the commit message and
-looks for a Bugzilla bug ID. Then if that bug can be found (and doesn't
+It does this by looking at the title of a newly created PR for a Bugzilla bug
+ID in the form "bug n". Then if that bug can be found (and doesn't
 already have a link) it creates an attachment which is a link that redirects
 to the Pull Request on GitHub.
 
