@@ -22,7 +22,7 @@ BUGZILLA_BASE_URL = config('BUGZILLA_BASE_URL', 'https://bugzilla.mozilla.org')
 BUGZILLA_API_KEY = config('BUGZILLA_API_KEY')
 
 
-app = Flask(__name__) # pep8 violation
+app = Flask(__name__)
 if 'DYNO' in os.environ:
     app.logger.addHandler(logging.StreamHandler(sys.stdout))
     app.logger.setLevel(

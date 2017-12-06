@@ -45,6 +45,12 @@ There, type in the the following:
 How to run locally
 ==================
 
+First create a `.env` file:
+
+    cp .env-dist .env
+
+Edit that `.env` file with real stuff if you have it.
+
 Create a `virtualenv` and install the dependencies:
 
     pip install -r requirements.txt
