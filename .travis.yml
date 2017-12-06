@@ -9,6 +9,7 @@ install:
     - travis_retry pip install -r requirements.txt
     - travis_retry pip install -r test-requirements.txt
     - pip install -e .
+    - cp .env-dist .env
 script:
     - FLASK_APP=app.app py.test
     - flake8
