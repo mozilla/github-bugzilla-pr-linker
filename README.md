@@ -41,6 +41,41 @@ There, type in the the following:
 
 ![Screenshot](screenshot-github-webhook.png)
 
+
+How to run locally
+==================
+
+First create a `.env` file:
+
+    cp .env-dist .env
+
+Edit that `.env` file with real stuff if you have it.
+
+Create a `virtualenv` and install the dependencies:
+
+    pip install -r requirements.txt
+
+Now start it:
+
+    FLASK_DEBUG=1 FLASK_APP=app.app flask run
+
+How to run tests
+================
+
+Install the dependencies for running tests:
+
+    pip install -r test-requirements.txt
+
+Run the tests:
+
+    FLASK_APP=app.app py.test
+
+How to run with Docker
+======================
+
+TODO!
+
+
 License
 =======
 

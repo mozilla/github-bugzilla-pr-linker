@@ -19,8 +19,6 @@ BUGZILLA_BASE_URL = config('BUGZILLA_BASE_URL', 'https://bugzilla.mozilla.org')
 # To generate one, go to https://bugzilla.mozilla.org/userprefs.cgi?tab=apikey
 # For production grade you probably want this to be tied to a more "formal"
 # user. Aka. some bot account.
-# XXX perhaps we can use this:
-# https://mana.mozilla.org/wiki/display/WebDev/Bugzilla+Github+Bug+Closer+Account
 BUGZILLA_API_KEY = config('BUGZILLA_API_KEY')
 
 
