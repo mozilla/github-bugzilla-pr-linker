@@ -1,4 +1,4 @@
--c test-constraints.txt
+-c dev-constraints.txt
 
 pytest-flask==0.14.0 \
     --hash=sha256:e9b120d23f73e0495d8fa1bc3b580b18cc9f98b8d6808bc45fdbcbab7d718242 \
@@ -31,3 +31,9 @@ attrs==18.2.0 \
 py==1.7.0 \
     --hash=sha256:e76826342cefe3c3d5f7e8ee4316b80d1dd8a300781612ddbc765c17ba25a6c6 \
     --hash=sha256:bf92637198836372b520efcba9e020c330123be8ce527e535d185ed4b6f45694
+black==18.9b0 \
+    --hash=sha256:817243426042db1d36617910df579a54f1afd659adb96fc5032fcf4b36209739 \
+    --hash=sha256:e030a9a28f542debc08acceb273f228ac422798e5215ba2a791a6ddeaaca22a5
+therapist==1.5.0 \
+    --hash=sha256:03f120c411f05e0fc6d95a6cbfb876b083a1fd854ddd22bb12eee05ef1670a31 \
+    --hash=sha256:58eada2a96d68d1df5d4b86450678528727e8e145f7edd2ec123b8618e8c14e4

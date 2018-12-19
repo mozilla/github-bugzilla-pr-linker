@@ -1,6 +1,9 @@
 What this is
 ============
 
+[![Build Status](https://travis-ci.org/mozilla/github-bugzilla-pr-linker.svg?branch=master)](https://travis-ci.org/mozilla/github-bugzilla-pr-linker)
+[![Code style](https://img.shields.io/badge/Code%20style-black-000000.svg)](https://github.com/ambv/black)
+
 A webhook that can automatically create Bugzilla attachments
 when new GitHub Pull Requests are created.
 
@@ -67,12 +70,42 @@ How to run tests
 
 Install the dependencies for running tests:
 
-    pip install -r test-requirements.txt
+    pip install -r dev-requirements.txt
 
 Run the tests:
 
     pip install -e .
     FLASK_APP=app.app pytest
+
+How to contribute
+=================
+
+All Python code needs to be [Black](https://github.com/ambv/black) and this
+is enforced in TravisCI. The same is true for `flake8` .
+
+For local development, it's best to use [`therapist`](https://pypi.org/project/therapist)
+which is already listed in `dev-requirements.txt`. To install a pre-commit
+hook that checks for `flake8` and `black` slip-ups. You install it like this:
+
+    pip install -r dev-requirements.txt
+    therapist install
+
+If you're eager to test if all the linting is passing you can run:
+
+    therapist run
+
+Which will check the files you have touched. This is basically what the
+pre-commit installed does except its exits can preven the git commit.
+
+To check *all* files run:
+
+    therapist run --use-tracked-files
+
+If you don't have auto-matic Black formatting in your editor you can run:
+
+    therapist run --fix
+
+Which will format all the files you have touched.
 
 How to run with Docker
 ======================

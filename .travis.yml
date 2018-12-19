@@ -7,9 +7,9 @@ before_install:
     - travis_retry pip install twine
 install:
     - travis_retry pip install -r requirements.txt
-    - travis_retry pip install -r test-requirements.txt
+    - travis_retry pip install -r dev-requirements.txt
     - pip install -e .
     - cp .env-dist .env
 script:
     - FLASK_APP=app.app pytest
-    - flake8
+    - therapist run --use-tracked-files
