@@ -21,6 +21,9 @@ set up is exclusive to Mozilla projects using `bugzilla.mozilla.org`.
 To use it in your project you need the password. See
 [the Mana documentation page](https://mana.mozilla.org/wiki/display/WebDev/GitHub+Bugzilla+PR+Linker).
 
+To get insight into GitHub projects that use this project you can [search by user activity](https://bugzilla.mozilla.org/page.cgi?id=user_activity.html&action=run&from=-14d&who=pulgasaur%40mozilla.bugs) 
+which gives you an idea of the projects.
+
 How to use
 ==========
 
