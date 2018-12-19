@@ -24,7 +24,7 @@ set up is exclusive to Mozilla projects using `bugzilla.mozilla.org`.
 To use it in your project you need the password. See
 [the Mana documentation page](https://mana.mozilla.org/wiki/display/WebDev/GitHub+Bugzilla+PR+Linker).
 
-To get insight into GitHub projects that use this project you can [search by user activity](https://bugzilla.mozilla.org/page.cgi?id=user_activity.html&action=run&from=-14d&who=pulgasaur%40mozilla.bugs) 
+To get insight into GitHub projects that use this project you can [search by user activity](https://bugzilla.mozilla.org/page.cgi?id=user_activity.html&action=run&from=-14d&who=pulgasaur%40mozilla.bugs)
 which gives you an idea of the projects.
 
 How to use
@@ -125,3 +125,11 @@ Heroku
 At the moment this Flask app is deployed on Heroku, using the
 Mozilla corporate account, under the name
 [github-bugzilla-pr-linker](https://dashboard.heroku.com/apps/github-bugzilla-pr-linker).
+
+
+Sentry
+======
+
+To enable Sentry error reporting you simply need to set an environment
+variable called `SENTRY_DSN` with the DSN string. Don't leave it as
+an empty string.
