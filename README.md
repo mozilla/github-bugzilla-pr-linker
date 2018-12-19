@@ -1,6 +1,9 @@
 What this is
 ============
 
+[![Build Status](https://travis-ci.org/mozilla/github-bugzilla-pr-linker.svg?branch=master)](https://travis-ci.org/mozilla/github-bugzilla-pr-linker)
+[![Code style](https://img.shields.io/badge/Code%20style-black-000000.svg)](https://github.com/ambv/black)
+
 A webhook that can automatically create Bugzilla attachments
 when new GitHub Pull Requests are created.
 
