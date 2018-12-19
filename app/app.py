@@ -195,7 +195,7 @@ def find_bug_id(text):
 
     # XXX Is this right?
     # How does the bugcloser do it?
-    regex = re.compile('bug (\d+)', re.I)
+    regex = re.compile(r'bug (\d+)', re.I)
     for match in regex.findall(text):
         return match
 
