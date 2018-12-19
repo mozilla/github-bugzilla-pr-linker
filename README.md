@@ -68,7 +68,8 @@ Install the dependencies for running tests:
 
 Run the tests:
 
-    FLASK_APP=app.app py.test
+    pip install -e .
+    FLASK_APP=app.app pytest
 
 How to run with Docker
 ======================

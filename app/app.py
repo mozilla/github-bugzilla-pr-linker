@@ -11,6 +11,7 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from decouple import config
 from flask import Flask, request, abort, jsonify
+from raven.contrib.flask import Sentry
 
 
 DEBUG = config('DEBUG', False, cast=bool)
@@ -20,6 +21,7 @@ BUGZILLA_BASE_URL = config('BUGZILLA_BASE_URL', 'https://bugzilla.mozilla.org')
 # For production grade you probably want this to be tied to a more "formal"
 # user. Aka. some bot account.
 BUGZILLA_API_KEY = config('BUGZILLA_API_KEY')
+SENTRY_DSN = config('SENTRY_DSN', None)
 
 
 app = Flask(__name__)
@@ -28,6 +30,8 @@ if 'DYNO' in os.environ:
     app.logger.setLevel(
         logging.DEBUG if DEBUG else logging.INFO
     )
+if SENTRY_DSN:
+    Sentry(app, dsn=SENTRY_DSN)
 
 
 def requests_retry_session(
@@ -191,7 +195,7 @@ def find_bug_id(text):
 
     # XXX Is this right?
     # How does the bugcloser do it?
-    regex = re.compile('bug (\d+)', re.I)
+    regex = re.compile(r'bug (\d+)', re.I)
     for match in regex.findall(text):
         return match
 
