@@ -4,6 +4,7 @@ import os
 import sys
 import re
 import hmac
+import hashlib
 import logging
 
 import requests
@@ -78,11 +79,10 @@ def postreceive():
         abort(400)
 
     raw_payload = request.get_data()
-    mac = hmac.new(
-        GITHUB_WEBHOOK_SECRET.encode("utf-8"), msg=raw_payload, digestmod="sha1"
-    )
-
-    if mac.hexdigest() != signature:
+    digest = hmac.new(
+        GITHUB_WEBHOOK_SECRET.encode("utf-8"), msg=raw_payload, digestmod=hashlib.sha1
+    ).hexdigest()
+    if not hmac.compare_digest(signature, digest):
         logger.warning("HMAC signature did not match")
         abort(403)
 
