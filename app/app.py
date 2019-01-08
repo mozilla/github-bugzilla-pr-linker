@@ -78,13 +78,14 @@ def postreceive():
         logger.warning(f"Algo used expected to be sha1, not {sha_name!r}")
         abort(400)
 
-    raw_payload = request.get_data()
+    raw_payload = request.form["payload"]
     if not raw_payload:
         logger.warning(f"No payload! {raw_payload!r}")
-        logger.warning(f"request.form.keys()={list(request.form.keys())}")
         abort(400, "Missing raw payload")
     digest = hmac.new(
-        GITHUB_WEBHOOK_SECRET.encode("utf-8"), msg=raw_payload, digestmod=hashlib.sha1
+        GITHUB_WEBHOOK_SECRET.encode("utf-8"),
+        msg=raw_payload.encode("utf-8"),
+        digestmod=hashlib.sha1,
     ).hexdigest()
     if not hmac.compare_digest(signature, digest):
         logger.warning(
