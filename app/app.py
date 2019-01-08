@@ -79,11 +79,16 @@ def postreceive():
         abort(400)
 
     raw_payload = request.get_data()
+    if not raw_payload:
+        logger.warning(f"No payload! {raw_payload!r}")
+        abort(400, "Missing raw payload")
+
     digest = hmac.new(
         GITHUB_WEBHOOK_SECRET.encode("utf-8"), msg=raw_payload, digestmod=hashlib.sha1
     ).hexdigest()
+
     if not hmac.compare_digest(signature, digest):
-        logger.warning("HMAC signature did not match")
+        logger.warning(f"HMAC signature did not match")
         abort(403)
 
     posted = json.loads(request.form["payload"])
