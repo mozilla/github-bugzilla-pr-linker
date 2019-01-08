@@ -83,7 +83,7 @@ def postreceive():
         GITHUB_WEBHOOK_SECRET.encode("utf-8"), msg=raw_payload, digestmod=hashlib.sha1
     ).hexdigest()
     if not hmac.compare_digest(signature, digest):
-        logger.warning("HMAC signature did not match")
+        logger.warning(f"HMAC signature did not match {signature!r}!={digest!r}")
         abort(403)
 
     posted = json.loads(request.form["payload"])
