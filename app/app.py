@@ -88,6 +88,7 @@ def postreceive():
         digestmod=hashlib.sha1,
     ).hexdigest()
     if not hmac.compare_digest(signature, digest):
+        logger.info(raw_payload)
         logger.warning(
             f"Payload ({len(raw_payload)}, {type(raw_payload)}) {raw_payload[:100]!r}"
         )
