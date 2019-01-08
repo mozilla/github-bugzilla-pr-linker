@@ -83,6 +83,9 @@ def postreceive():
         GITHUB_WEBHOOK_SECRET.encode("utf-8"), msg=raw_payload, digestmod=hashlib.sha1
     ).hexdigest()
     if not hmac.compare_digest(signature, digest):
+        logger.warning(
+            f"Payload ({len(raw_payload)}, {type(raw_payload)}) {raw_payload[:100]!r}"
+        )
         logger.warning(f"HMAC signature did not match {signature!r}!={digest!r}")
         abort(403)
 
