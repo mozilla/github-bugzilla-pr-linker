@@ -37,3 +37,8 @@ black==18.9b0 \
 therapist==1.5.0 \
     --hash=sha256:03f120c411f05e0fc6d95a6cbfb876b083a1fd854ddd22bb12eee05ef1670a31 \
     --hash=sha256:58eada2a96d68d1df5d4b86450678528727e8e145f7edd2ec123b8618e8c14e4
+responses==0.10.5 \
+    --hash=sha256:ea5a14f9aea173e3b786ff04cf03133c2dabd4103dbaef1028742fd71a6c2ad3 \
+    --hash=sha256:c85882d2dc608ce6b5713a4e1534120f4a0dc6ec79d1366570d2b0c909a50c87
+pytest-env==0.6.2 \
+    --hash=sha256:7e94956aef7f2764f3c147d216ce066bf6c42948bb9e293169b1b1c880a580c2
