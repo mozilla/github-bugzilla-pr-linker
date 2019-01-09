@@ -177,7 +177,7 @@ def find_bug_comments(session, id):
     """Return true if the bug can be found"""
     bug_url = f"{BUGZILLA_BASE_URL}/rest/bug/{id}/comment"
     response = session.get(bug_url)
-    print("bug_url", bug_url, response.status_code)
+    # print("bug_url", bug_url, response.status_code)
     if response.status_code == 200:
         return response.json()["bugs"][id]["comments"]
 
