@@ -57,7 +57,7 @@ First create a `.env` file:
 
 Edit that `.env` file with real stuff if you have it.
 
-Create a `virtualenv` and install the dependencies:
+Create a Python 3 `virtualenv` and install the dependencies:
 
     pip install -r requirements.txt
 
