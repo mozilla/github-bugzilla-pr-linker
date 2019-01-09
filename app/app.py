@@ -12,7 +12,8 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from decouple import config
 from flask import Flask, request, abort, jsonify
-from raven.contrib.flask import Sentry
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 
 DEBUG = config("DEBUG", False, cast=bool)
@@ -24,13 +25,17 @@ BUGZILLA_BASE_URL = config("BUGZILLA_BASE_URL", "https://bugzilla.mozilla.org")
 BUGZILLA_API_KEY = config("BUGZILLA_API_KEY")
 SENTRY_DSN = config("SENTRY_DSN", None)
 
+if SENTRY_DSN:
+    # Note that Flask + gunicorn + raven.contrib.flask.Sentry is broken.
+    # Using sentry_sdk instead works.
+    # The reason it's broken is that when combined, the `request.get_data()`
+    # *always* just becomes an empty string (b'').
+    sentry_sdk.init(dsn=SENTRY_DSN, integrations=[FlaskIntegration()])
 
 app = Flask(__name__)
 if "DYNO" in os.environ:
     app.logger.addHandler(logging.StreamHandler(sys.stdout))
     app.logger.setLevel(logging.DEBUG if DEBUG else logging.INFO)
-if SENTRY_DSN:
-    Sentry(app, dsn=SENTRY_DSN)
 
 
 def requests_retry_session(
