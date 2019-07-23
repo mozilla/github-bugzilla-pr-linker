@@ -195,8 +195,6 @@ def postreceive():
         if author != committer:
             comment += f"Authored by {author}\n\n"
 
-        raise NotImplementedError
-
     else:
         msg = "Not a pull_request or push event"
         logger.warning(msg)
