@@ -93,55 +93,114 @@ def postreceive():
     ).hexdigest()
 
     if not hmac.compare_digest(signature, digest):
-        logger.warning(f"HMAC signature did not match")
-        abort(403)
+        msg = "HMAC signature did not match"
+        logger.warning(msg)
+        abort(403, msg)
 
     posted = json.loads(request.form["payload"])
 
-    if not posted.get("pull_request"):
-        logger.warning("Not a pull_request {!r}".format(posted.get("pull_request")))
-        abort(400)
-
-    if posted.get("action") != "opened":  # only created PRs
-        logger.warning(
-            "Action was NOT 'opened'. It was {!r}".format(posted.get("action"))
-        )
-        return "OK"
-
-    pull_request = posted["pull_request"]
-
-    if not pull_request.get("title") or not find_bug_id(pull_request["title"]):
-        logger.info("No bug ID found in title {!r}".format(pull_request.get("title")))
-        return "No bug ID found in the title"
-
     session = requests_retry_session()
 
-    url = pull_request["_links"]["html"]["href"]
-    bug_id = find_bug_id(pull_request["title"])
-    # Can we find the bug at all?!
-    bug_comments = find_bug_comments(session, bug_id)
-    # Note, if the bug doesn't have any comments 'bug_comments' will
-    # be an empty list, not None.
-    if bug_comments is None:
-        # Oh no! Bug can't be found
-        logger.warning(f"Bug {bug_id!r} can not be found")
-        abort(400)
+    if posted.get("pull_request"):
 
-    # loop over the current comments to see if there's already on
-    for i, comment in enumerate(bug_comments):
-        if comment.get("is_obsolete"):
-            continue
-        if url in comment["text"]:
-            # exit early!
-            logger.info(f"Pull request URL already in comment {i+1}")
-            return
+        if posted.get("action") != "opened":  # only created PRs
+            logger.warning(
+                "Action was NOT 'opened'. It was {!r}".format(posted.get("action"))
+            )
+            return "OK"
 
-    # let's go ahead and post the comment!
-    attachment_url = f"{BUGZILLA_BASE_URL}/rest/bug/{bug_id}/attachment"
-    summary = f"Link to GitHub pull-request: {url}"
-    pull_request_id = pull_request["id"]
+        pull_request = posted["pull_request"]
 
-    comment = pull_request.get("description", "")
+        if not pull_request.get("title") or not find_bug_id(pull_request["title"]):
+            logger.info(
+                "No bug ID found in title {!r}".format(pull_request.get("title"))
+            )
+            return "No bug ID found in the title"
+
+        url = pull_request["_links"]["html"]["href"]
+        bug_id = find_bug_id(pull_request["title"])
+        # Can we find the bug at all?!
+        bug_comments = find_bug_comments(session, bug_id)
+        # Note, if the bug doesn't have any comments 'bug_comments' will
+        # be an empty list, not None.
+        if bug_comments is None:
+            # Oh no! Bug can't be found
+            logger.warning(f"Bug {bug_id!r} can not be found")
+            abort(400)
+
+        # loop over the current comments to see if there's already on
+        for i, comment in enumerate(bug_comments):
+            if comment.get("is_obsolete"):
+                continue
+            if url in comment["text"]:
+                # exit early!
+                logger.info(f"Pull request URL already in comment {i+1}")
+                return
+
+        # let's go ahead and post the comment!
+        attachment_url = f"{BUGZILLA_BASE_URL}/rest/bug/{bug_id}/attachment"
+        summary = f"Link to GitHub pull-request: {url}"
+        pull_request_id = pull_request["id"]
+        attachment_file_name = f"file_{pull_request_id}.txt"
+        comment = pull_request.get("description", "")
+
+    elif request.headers.get("X-GitHub-Event") == "push":
+        if posted.get("ref") != "refs/heads/master":
+            msg = "Not a push to master"
+            logger.warning(msg)
+            abort(400, msg)
+
+        url = posted["head_commit"]["url"]
+        bug_id = find_bug_id(posted["head_commit"]["message"])
+        if not bug_id:
+            msg = "Could not find a bug ID from message: {!r}".format(
+                posted["head_commit"]["message"]
+            )
+            logger.warning(msg)
+            abort(400, msg)
+
+        # Can we find the bug at all?!
+        bug_comments = find_bug_comments(session, bug_id)
+        # Note, if the bug doesn't have any comments 'bug_comments' will
+        # be an empty list, not None.
+        if bug_comments is None:
+            # Oh no! Bug can't be found
+            logger.warning(f"Bug {bug_id!r} can not be found")
+            abort(400)
+
+        # loop over the current comments to see if there's already on
+        for i, comment in enumerate(bug_comments):
+            if comment.get("is_obsolete"):
+                continue
+            if url in comment["text"]:
+                # exit early!
+                logger.info(f"Push URL already in comment {i+1}")
+                return
+
+        attachment_url = f"{BUGZILLA_BASE_URL}/rest/bug/{bug_id}/attachment"
+
+        short_sha = posted["head_commit"]["id"][:7]
+        attachment_file_name = f"file_{short_sha}.txt"
+
+        summary = f"Link to GitHub master push: {url}"
+
+        committer = posted["head_commit"]["committer"]["name"]
+        if posted["head_commit"]["committer"]["username"] != "web-flow":
+            committer += " ({})".format(posted["head_commit"]["committer"]["username"])
+        author = posted["head_commit"]["author"]["name"]
+        if posted["head_commit"]["author"]["username"] != "web-flow":
+            author += " ({})".format(posted["head_commit"]["author"]["username"])
+
+        comment = f"Commit merged into master by {committer}\n"
+        if author != committer:
+            comment += f"Authored by {author}\n\n"
+
+        raise NotImplementedError
+
+    else:
+        msg = "Not a pull_request or push event"
+        logger.warning(msg)
+        abort(400, msg)
 
     response = requests.post(
         attachment_url,
@@ -149,7 +208,7 @@ def postreceive():
             "ids": [bug_id],
             "summary": summary,
             "data": base64.b64encode(url.encode("utf-8")).decode("utf-8"),
-            "file_name": f"file_{pull_request_id}.txt",
+            "file_name": attachment_file_name,
             "content_type": "text/x-github-pull-request",
             "comment": comment,
         },
