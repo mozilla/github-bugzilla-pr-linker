@@ -1,0 +1,211 @@
+{
+  "ref": "refs/heads/master",
+  "before": "0d331b18e25e2aaa760e77331229fc6ced56f0dc",
+  "after": "c0ee327f6a5fd62b83912ebd6622a965040421a5",
+  "created": false,
+  "deleted": false,
+  "forced": false,
+  "base_ref": null,
+  "compare": "https://github.com/mozilla/github-bugzilla-pr-linker/compare/0d331b18e25e...c0ee327f6a5f",
+  "commits": [
+    {
+      "id": "c0ee327f6a5fd62b83912ebd6622a965040421a5",
+      "tree_id": "d66b8e9cc3aa0ff28aa52fa9066b80e178379ede",
+      "distinct": true,
+      "message": "upgrade python libs (#30)",
+      "timestamp": "2019-06-24T19:46:04-07:00",
+      "url": "https://github.com/mozilla/github-bugzilla-pr-linker/commit/c0ee327f6a5fd62b83912ebd6622a965040421a5",
+      "author": {
+        "name": "Peter Bengtsson",
+        "email": "mail@peterbe.com",
+        "username": "peterbe"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "username": "web-flow"
+      },
+      "added": [
+
+      ],
+      "removed": [
+
+      ],
+      "modified": [
+        "constraints.txt",
+        "requirements.txt"
+      ]
+    }
+  ],
+  "head_commit": {
+    "id": "c0ee327f6a5fd62b83912ebd6622a965040421a5",
+    "tree_id": "d66b8e9cc3aa0ff28aa52fa9066b80e178379ede",
+    "distinct": true,
+    "message": "upgrade python libs (#30)",
+    "timestamp": "2019-06-24T19:46:04-07:00",
+    "url": "https://github.com/mozilla/github-bugzilla-pr-linker/commit/c0ee327f6a5fd62b83912ebd6622a965040421a5",
+    "author": {
+      "name": "Peter Bengtsson",
+      "email": "mail@peterbe.com",
+      "username": "peterbe"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "username": "web-flow"
+    },
+    "added": [
+
+    ],
+    "removed": [
+
+    ],
+    "modified": [
+      "constraints.txt",
+      "requirements.txt"
+    ]
+  },
+  "repository": {
+    "id": 100298988,
+    "node_id": "MDEwOlJlcG9zaXRvcnkxMDAyOTg5ODg=",
+    "name": "github-bugzilla-pr-linker",
+    "full_name": "mozilla/github-bugzilla-pr-linker",
+    "private": false,
+    "owner": {
+      "name": "mozilla",
+      "email": null,
+      "login": "mozilla",
+      "id": 131524,
+      "node_id": "MDEyOk9yZ2FuaXphdGlvbjEzMTUyNA==",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/131524?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mozilla",
+      "html_url": "https://github.com/mozilla",
+      "followers_url": "https://api.github.com/users/mozilla/followers",
+      "following_url": "https://api.github.com/users/mozilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mozilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mozilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mozilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/mozilla/orgs",
+      "repos_url": "https://api.github.com/users/mozilla/repos",
+      "events_url": "https://api.github.com/users/mozilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mozilla/received_events",
+      "type": "Organization",
+      "site_admin": false
+    },
+    "html_url": "https://github.com/mozilla/github-bugzilla-pr-linker",
+    "description": "Create Bugzilla attachment comments when new GitHub Pull Requests are created",
+    "fork": false,
+    "url": "https://github.com/mozilla/github-bugzilla-pr-linker",
+    "forks_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/forks",
+    "keys_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/keys{/key_id}",
+    "collaborators_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/collaborators{/collaborator}",
+    "teams_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/teams",
+    "hooks_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/hooks",
+    "issue_events_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/issues/events{/number}",
+    "events_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/events",
+    "assignees_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/assignees{/user}",
+    "branches_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/branches{/branch}",
+    "tags_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/tags",
+    "blobs_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/git/blobs{/sha}",
+    "git_tags_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/git/tags{/sha}",
+    "git_refs_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/git/refs{/sha}",
+    "trees_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/git/trees{/sha}",
+    "statuses_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/statuses/{sha}",
+    "languages_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/languages",
+    "stargazers_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/stargazers",
+    "contributors_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/contributors",
+    "subscribers_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/subscribers",
+    "subscription_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/subscription",
+    "commits_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/commits{/sha}",
+    "git_commits_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/git/commits{/sha}",
+    "comments_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/comments{/number}",
+    "issue_comment_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/issues/comments{/number}",
+    "contents_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/contents/{+path}",
+    "compare_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/compare/{base}...{head}",
+    "merges_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/merges",
+    "archive_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/{archive_format}{/ref}",
+    "downloads_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/downloads",
+    "issues_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/issues{/number}",
+    "pulls_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/pulls{/number}",
+    "milestones_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/milestones{/number}",
+    "notifications_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/notifications{?since,all,participating}",
+    "labels_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/labels{/name}",
+    "releases_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/releases{/id}",
+    "deployments_url": "https://api.github.com/repos/mozilla/github-bugzilla-pr-linker/deployments",
+    "created_at": 1502736338,
+    "updated_at": "2019-04-19T18:01:41Z",
+    "pushed_at": 1561430765,
+    "git_url": "git://github.com/mozilla/github-bugzilla-pr-linker.git",
+    "ssh_url": "git@github.com:mozilla/github-bugzilla-pr-linker.git",
+    "clone_url": "https://github.com/mozilla/github-bugzilla-pr-linker.git",
+    "svn_url": "https://github.com/mozilla/github-bugzilla-pr-linker",
+    "homepage": "",
+    "size": 1109,
+    "stargazers_count": 2,
+    "watchers_count": 2,
+    "language": "Python",
+    "has_issues": true,
+    "has_projects": false,
+    "has_downloads": true,
+    "has_wiki": false,
+    "has_pages": false,
+    "forks_count": 7,
+    "mirror_url": null,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 9,
+    "license": {
+      "key": "mpl-2.0",
+      "name": "Mozilla Public License 2.0",
+      "spdx_id": "MPL-2.0",
+      "url": "https://api.github.com/licenses/mpl-2.0",
+      "node_id": "MDc6TGljZW5zZTE0"
+    },
+    "forks": 7,
+    "open_issues": 9,
+    "watchers": 2,
+    "default_branch": "master",
+    "stargazers": 2,
+    "master_branch": "master",
+    "organization": "mozilla"
+  },
+  "pusher": {
+    "name": "peterbe",
+    "email": "peterbe@mozilla.com"
+  },
+  "organization": {
+    "login": "mozilla",
+    "id": 131524,
+    "node_id": "MDEyOk9yZ2FuaXphdGlvbjEzMTUyNA==",
+    "url": "https://api.github.com/orgs/mozilla",
+    "repos_url": "https://api.github.com/orgs/mozilla/repos",
+    "events_url": "https://api.github.com/orgs/mozilla/events",
+    "hooks_url": "https://api.github.com/orgs/mozilla/hooks",
+    "issues_url": "https://api.github.com/orgs/mozilla/issues",
+    "members_url": "https://api.github.com/orgs/mozilla/members{/member}",
+    "public_members_url": "https://api.github.com/orgs/mozilla/public_members{/member}",
+    "avatar_url": "https://avatars2.githubusercontent.com/u/131524?v=4",
+    "description": "This technology could fall into the right hands."
+  },
+  "sender": {
+    "login": "peterbe",
+    "id": 26739,
+    "node_id": "MDQ6VXNlcjI2NzM5",
+    "avatar_url": "https://avatars2.githubusercontent.com/u/26739?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/peterbe",
+    "html_url": "https://github.com/peterbe",
+    "followers_url": "https://api.github.com/users/peterbe/followers",
+    "following_url": "https://api.github.com/users/peterbe/following{/other_user}",
+    "gists_url": "https://api.github.com/users/peterbe/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/peterbe/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/peterbe/subscriptions",
+    "organizations_url": "https://api.github.com/users/peterbe/orgs",
+    "repos_url": "https://api.github.com/users/peterbe/repos",
+    "events_url": "https://api.github.com/users/peterbe/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/peterbe/received_events",
+    "type": "User",
+    "site_admin": false
+  }
+}
