@@ -37,9 +37,18 @@ if "DYNO" in os.environ:
     app.logger.addHandler(logging.StreamHandler(sys.stdout))
     app.logger.setLevel(logging.DEBUG if DEBUG else logging.INFO)
 
+# Can be very generous with these because since it's a bot started from a Webhook
+# it can be really patient.
+REQUESTS_RETRY_RETRIES = 5
+REQUESTS_RETRY_BACKOFF_FACTOR = 0.5
+REQUESTS_RETRY_STATUS_FORCELIST = (502, 504)
+
 
 def requests_retry_session(
-    retries=3, backoff_factor=0.3, status_forcelist=(502, 504), session=None
+    retries=REQUESTS_RETRY_RETRIES,
+    backoff_factor=REQUESTS_RETRY_BACKOFF_FACTOR,
+    status_forcelist=REQUESTS_RETRY_STATUS_FORCELIST,
+    session=None,
 ):
     session = session or requests.Session()
     retry = Retry(
@@ -212,7 +221,6 @@ def postreceive():
         },
         headers={"X-BUGZILLA-API-KEY": BUGZILLA_API_KEY},
     )
-    # print((response.status_code, response.content[:1000]))
     if response.status_code == 401:
         logger.error("Unauthorized attempt to post attachment (%r)", response.content)
         abort(500)
@@ -233,8 +241,10 @@ def postreceive():
 def find_bug_comments(session, id):
     """Return true if the bug can be found"""
     bug_url = f"{BUGZILLA_BASE_URL}/rest/bug/{id}/comment"
-    response = session.get(bug_url)
-    # print("bug_url", bug_url, response.status_code)
+    # Be generous with the timeout because we're using retries and the totality
+    # of this program is to run as a bot. If Bugzilla is really down it means we're
+    # going to give it `10s * REQUESTS_RETRY_RETRIES` attempts.
+    response = session.get(bug_url, timeout=10)
     if response.status_code == 200:
         return response.json()["bugs"][id]["comments"]
 
