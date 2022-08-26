@@ -1,3 +1,9 @@
+Note (August 26th, 2022)
+========================
+
+This project is being shut down. See https://github.com/mozilla/github-bugzilla-pr-linker/issues/41 for details.
+
+
 What this is
 ============
 
